@@ -77,10 +77,15 @@
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-demo</artifactId>
         </dependency>
-        <!--  demo模块  -->
+        <!--  test模块  -->
         <dependency>
             <groupId>com.ruoyi</groupId>
             <artifactId>ruoyi-test</artifactId>
+        </dependency>
+     <!--  devices模块  -->
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>ruoyi-devices</artifactId>
         </dependency>
 
         <dependency>

@@ -331,8 +331,15 @@
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-test</artifactId>
-                <version>4.6.0</version>
+                <version>${ruoyi-vue-plus.version}</version>
             </dependency>
+            <!-- demo模块 -->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>ruoyi-devices</artifactId>
+                <version>${ruoyi-vue-plus.version}</version>
+            </dependency>
+
 
         </dependencies>
     </dependencyManagement>
@@ -350,6 +357,7 @@
         <module>ruoyi-sms</module>
         <module>ruoyi-device</module>
         <module>ruoyi-test</module>
+        <module>ruoyi-devices</module>
     </modules>
     <packaging>pom</packaging>
 

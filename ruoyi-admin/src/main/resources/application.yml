@@ -137,8 +137,9 @@ security:
     # actuator 监控配置
     - /actuator
     - /actuator/**
-    #device 额。。。。
-#    - /test/**
+#    device 额。。。。
+    - /devices/**
+
 # MyBatisPlus配置
 # https://baomidou.com/config/
 mybatis-plus:
