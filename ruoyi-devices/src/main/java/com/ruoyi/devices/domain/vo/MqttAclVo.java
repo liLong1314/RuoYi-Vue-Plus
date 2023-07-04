@@ -10,10 +10,10 @@ import java.util.Date;
 
 
 /**
- * mqtt客户的acl规则，符合该规则的发布/订阅才可行视图对象 t_mqtt_acl
+ * mqttUser的acl规则视图对象 t_mqtt_acl
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 @Data
 @ExcelIgnoreUnannotated

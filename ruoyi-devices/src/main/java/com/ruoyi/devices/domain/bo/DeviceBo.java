@@ -11,10 +11,10 @@ import java.util.Date;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 设备的管理业务对象 t_device
+ * 设备管理业务对象 t_device
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 
 @Data
@@ -24,6 +24,7 @@ public class DeviceBo extends BaseEntity {
     /**
      * 
      */
+    @NotNull(message = "不能为空", groups = { EditGroup.class })
     private Long id;
 
     /**
@@ -46,7 +47,6 @@ public class DeviceBo extends BaseEntity {
     /**
      * 1:已删除，0:正常
      */
-    @NotNull(message = "1:已删除，0:正常不能为空", groups = { AddGroup.class, EditGroup.class })
     private Integer deleted;
 
 

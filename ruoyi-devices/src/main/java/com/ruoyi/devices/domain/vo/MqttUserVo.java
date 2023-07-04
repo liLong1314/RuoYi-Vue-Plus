@@ -13,7 +13,7 @@ import java.util.Date;
  * mqtt客户的连接鉴权，密码为sha256加密视图对象 t_mqtt_user
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 @Data
 @ExcelIgnoreUnannotated
@@ -32,12 +32,6 @@ public class MqttUserVo {
      */
     @ExcelProperty(value = "用户名")
     private String username;
-
-    /**
-     * 密码
-     */
-    @ExcelProperty(value = "密码")
-    private String password;
 
     /**
      * 备注

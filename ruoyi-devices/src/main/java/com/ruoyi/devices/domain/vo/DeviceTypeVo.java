@@ -10,10 +10,10 @@ import java.util.Date;
 
 
 /**
- * 功能名：设备类型的管理视图对象 t_device_type
+ * 设备类型视图对象 t_device_type
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 @Data
 @ExcelIgnoreUnannotated
@@ -22,9 +22,9 @@ public class DeviceTypeVo {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     * id
      */
-    @ExcelProperty(value = "")
+    @ExcelProperty(value = "id")
     private Long id;
 
     /**
@@ -50,18 +50,6 @@ public class DeviceTypeVo {
      */
     @ExcelProperty(value = "设备图片")
     private String pic;
-
-    /**
-     * json自定义属性
-     */
-    @ExcelProperty(value = "json自定义属性")
-    private String attributes;
-
-    /**
-     * 1:已删除，0:正常
-     */
-    @ExcelProperty(value = "1:已删除，0:正常")
-    private Integer deleted;
 
 
 }

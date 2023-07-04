@@ -14,7 +14,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * mqtt客户的连接鉴权，密码为sha256加密业务对象 t_mqtt_user
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 
 @Data
@@ -22,11 +22,10 @@ import com.ruoyi.common.core.domain.BaseEntity;
 public class MqttUserBo extends BaseEntity {
 
     /**
-     * 编号
+     * id
      */
-    @NotNull(message = "编号不能为空", groups = { EditGroup.class })
+//    @NotBlank(message = "用户名不能为空", groups = { AddGroup.class, EditGroup.class })
     private Long id;
-
     /**
      * 用户名
      */
@@ -42,7 +41,6 @@ public class MqttUserBo extends BaseEntity {
     /**
      * 备注
      */
-    @NotBlank(message = "备注不能为空", groups = { AddGroup.class, EditGroup.class })
     private String remark;
 
 

@@ -20,10 +20,10 @@ import java.util.Map;
 import java.util.Collection;
 
 /**
- * 设备的管理Service业务层处理
+ * 设备管理Service业务层处理
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 @RequiredArgsConstructor
 @Service
@@ -32,7 +32,7 @@ public class DeviceServiceImpl implements IDeviceService {
     private final DeviceMapper baseMapper;
 
     /**
-     * 查询设备的管理
+     * 查询设备管理
      */
     @Override
     public DeviceVo queryById(Long id){
@@ -40,7 +40,7 @@ public class DeviceServiceImpl implements IDeviceService {
     }
 
     /**
-     * 查询设备的管理列表
+     * 查询设备管理列表
      */
     @Override
     public TableDataInfo<DeviceVo> queryPageList(DeviceBo bo, PageQuery pageQuery) {
@@ -50,7 +50,7 @@ public class DeviceServiceImpl implements IDeviceService {
     }
 
     /**
-     * 查询设备的管理列表
+     * 查询设备管理列表
      */
     @Override
     public List<DeviceVo> queryList(DeviceBo bo) {
@@ -63,13 +63,12 @@ public class DeviceServiceImpl implements IDeviceService {
         LambdaQueryWrapper<Device> lqw = Wrappers.lambdaQuery();
         lqw.eq(StringUtils.isNotBlank(bo.getSerialNum()), Device::getSerialNum, bo.getSerialNum());
         lqw.eq(bo.getDeviceTypeId() != null, Device::getDeviceTypeId, bo.getDeviceTypeId());
-        lqw.eq(StringUtils.isNotBlank(bo.getRemark()), Device::getRemark, bo.getRemark());
         lqw.eq(bo.getDeleted() != null, Device::getDeleted, bo.getDeleted());
         return lqw;
     }
 
     /**
-     * 新增设备的管理
+     * 新增设备管理
      */
     @Override
     public Boolean insertByBo(DeviceBo bo) {
@@ -83,7 +82,7 @@ public class DeviceServiceImpl implements IDeviceService {
     }
 
     /**
-     * 修改设备的管理
+     * 修改设备管理
      */
     @Override
     public Boolean updateByBo(DeviceBo bo) {
@@ -100,7 +99,7 @@ public class DeviceServiceImpl implements IDeviceService {
     }
 
     /**
-     * 批量删除设备的管理
+     * 批量删除设备管理
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {

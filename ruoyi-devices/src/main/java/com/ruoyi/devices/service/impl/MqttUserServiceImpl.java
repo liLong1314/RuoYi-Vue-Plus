@@ -23,7 +23,7 @@ import java.util.Collection;
  * mqtt客户的连接鉴权，密码为sha256加密Service业务层处理
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 @RequiredArgsConstructor
 @Service
@@ -62,7 +62,6 @@ public class MqttUserServiceImpl implements IMqttUserService {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<MqttUser> lqw = Wrappers.lambdaQuery();
         lqw.like(StringUtils.isNotBlank(bo.getUsername()), MqttUser::getUsername, bo.getUsername());
-        lqw.eq(StringUtils.isNotBlank(bo.getPassword()), MqttUser::getPassword, bo.getPassword());
         return lqw;
     }
 
@@ -76,6 +75,7 @@ public class MqttUserServiceImpl implements IMqttUserService {
         boolean flag = baseMapper.insert(add) > 0;
         if (flag) {
             bo.setId(add.getId());
+
         }
         return flag;
     }

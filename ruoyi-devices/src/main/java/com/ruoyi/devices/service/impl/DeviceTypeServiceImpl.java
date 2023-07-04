@@ -20,10 +20,10 @@ import java.util.Map;
 import java.util.Collection;
 
 /**
- * 功能名：设备类型的管理Service业务层处理
+ * 设备类型Service业务层处理
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 @RequiredArgsConstructor
 @Service
@@ -32,7 +32,7 @@ public class DeviceTypeServiceImpl implements IDeviceTypeService {
     private final DeviceTypeMapper baseMapper;
 
     /**
-     * 查询功能名：设备类型的管理
+     * 查询设备类型
      */
     @Override
     public DeviceTypeVo queryById(Long id){
@@ -40,7 +40,7 @@ public class DeviceTypeServiceImpl implements IDeviceTypeService {
     }
 
     /**
-     * 查询功能名：设备类型的管理列表
+     * 查询设备类型列表
      */
     @Override
     public TableDataInfo<DeviceTypeVo> queryPageList(DeviceTypeBo bo, PageQuery pageQuery) {
@@ -50,7 +50,7 @@ public class DeviceTypeServiceImpl implements IDeviceTypeService {
     }
 
     /**
-     * 查询功能名：设备类型的管理列表
+     * 查询设备类型列表
      */
     @Override
     public List<DeviceTypeVo> queryList(DeviceTypeBo bo) {
@@ -62,16 +62,12 @@ public class DeviceTypeServiceImpl implements IDeviceTypeService {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<DeviceType> lqw = Wrappers.lambdaQuery();
         lqw.like(StringUtils.isNotBlank(bo.getName()), DeviceType::getName, bo.getName());
-        lqw.eq(StringUtils.isNotBlank(bo.getDeviceModel()), DeviceType::getDeviceModel, bo.getDeviceModel());
-        lqw.eq(StringUtils.isNotBlank(bo.getCode()), DeviceType::getCode, bo.getCode());
-        lqw.eq(StringUtils.isNotBlank(bo.getPic()), DeviceType::getPic, bo.getPic());
-        lqw.eq(StringUtils.isNotBlank(bo.getAttributes()), DeviceType::getAttributes, bo.getAttributes());
-        lqw.eq(bo.getDeleted() != null, DeviceType::getDeleted, bo.getDeleted());
+        lqw.like(StringUtils.isNotBlank(bo.getDeviceModel()), DeviceType::getDeviceModel, bo.getDeviceModel());
         return lqw;
     }
 
     /**
-     * 新增功能名：设备类型的管理
+     * 新增设备类型
      */
     @Override
     public Boolean insertByBo(DeviceTypeBo bo) {
@@ -80,12 +76,13 @@ public class DeviceTypeServiceImpl implements IDeviceTypeService {
         boolean flag = baseMapper.insert(add) > 0;
         if (flag) {
             bo.setId(add.getId());
+
         }
         return flag;
     }
 
     /**
-     * 修改功能名：设备类型的管理
+     * 修改设备类型
      */
     @Override
     public Boolean updateByBo(DeviceTypeBo bo) {
@@ -102,7 +99,7 @@ public class DeviceTypeServiceImpl implements IDeviceTypeService {
     }
 
     /**
-     * 批量删除功能名：设备类型的管理
+     * 批量删除设备类型
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {

@@ -10,10 +10,10 @@ import java.math.BigDecimal;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 设备的管理对象 t_device
+ * 设备管理对象 t_device
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

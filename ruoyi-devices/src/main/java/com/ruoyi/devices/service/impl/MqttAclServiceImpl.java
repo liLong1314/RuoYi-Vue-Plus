@@ -20,10 +20,10 @@ import java.util.Map;
 import java.util.Collection;
 
 /**
- * mqtt客户的acl规则，符合该规则的发布/订阅才可行Service业务层处理
+ * mqttUser的acl规则Service业务层处理
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 @RequiredArgsConstructor
 @Service
@@ -32,7 +32,7 @@ public class MqttAclServiceImpl implements IMqttAclService {
     private final MqttAclMapper baseMapper;
 
     /**
-     * 查询mqtt客户的acl规则，符合该规则的发布/订阅才可行
+     * 查询mqttUser的acl规则
      */
     @Override
     public MqttAclVo queryById(Long id){
@@ -40,7 +40,7 @@ public class MqttAclServiceImpl implements IMqttAclService {
     }
 
     /**
-     * 查询mqtt客户的acl规则，符合该规则的发布/订阅才可行列表
+     * 查询mqttUser的acl规则列表
      */
     @Override
     public TableDataInfo<MqttAclVo> queryPageList(MqttAclBo bo, PageQuery pageQuery) {
@@ -50,7 +50,7 @@ public class MqttAclServiceImpl implements IMqttAclService {
     }
 
     /**
-     * 查询mqtt客户的acl规则，符合该规则的发布/订阅才可行列表
+     * 查询mqttUser的acl规则列表
      */
     @Override
     public List<MqttAclVo> queryList(MqttAclBo bo) {
@@ -61,15 +61,12 @@ public class MqttAclServiceImpl implements IMqttAclService {
     private LambdaQueryWrapper<MqttAcl> buildQueryWrapper(MqttAclBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<MqttAcl> lqw = Wrappers.lambdaQuery();
-        lqw.like(StringUtils.isNotBlank(bo.getUsername()), MqttAcl::getUsername, bo.getUsername());
         lqw.like(StringUtils.isNotBlank(bo.getTopic()), MqttAcl::getTopic, bo.getTopic());
-        lqw.eq(bo.getAccess() != null, MqttAcl::getAccess, bo.getAccess());
-        lqw.eq(bo.getAllow() != null, MqttAcl::getAllow, bo.getAllow());
         return lqw;
     }
 
     /**
-     * 新增mqtt客户的acl规则，符合该规则的发布/订阅才可行
+     * 新增mqttUser的acl规则
      */
     @Override
     public Boolean insertByBo(MqttAclBo bo) {
@@ -78,12 +75,13 @@ public class MqttAclServiceImpl implements IMqttAclService {
         boolean flag = baseMapper.insert(add) > 0;
         if (flag) {
             bo.setId(add.getId());
+
         }
         return flag;
     }
 
     /**
-     * 修改mqtt客户的acl规则，符合该规则的发布/订阅才可行
+     * 修改mqttUser的acl规则
      */
     @Override
     public Boolean updateByBo(MqttAclBo bo) {
@@ -100,7 +98,7 @@ public class MqttAclServiceImpl implements IMqttAclService {
     }
 
     /**
-     * 批量删除mqtt客户的acl规则，符合该规则的发布/订阅才可行
+     * 批量删除mqttUser的acl规则
      */
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {

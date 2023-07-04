@@ -13,7 +13,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
  * mqtt客户的连接鉴权，密码为sha256加密对象 t_mqtt_user
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

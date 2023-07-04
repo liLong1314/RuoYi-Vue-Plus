@@ -10,10 +10,10 @@ import java.math.BigDecimal;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * mqtt客户的acl规则，符合该规则的发布/订阅才可行对象 t_mqtt_acl
+ * mqttUser的acl规则对象 t_mqtt_acl
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

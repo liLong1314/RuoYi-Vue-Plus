@@ -11,10 +11,10 @@ import java.util.Date;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 功能名：设备类型的管理业务对象 t_device_type
+ * 设备类型业务对象 t_device_type
  *
  * @author 李健
- * @date 2023-07-03
+ * @date 2023-07-04
  */
 
 @Data
@@ -22,9 +22,8 @@ import com.ruoyi.common.core.domain.BaseEntity;
 public class DeviceTypeBo extends BaseEntity {
 
     /**
-     * 
+     * 新加的
      */
-    @NotNull(message = "不能为空", groups = { EditGroup.class })
     private Long id;
 
     /**
@@ -48,20 +47,7 @@ public class DeviceTypeBo extends BaseEntity {
     /**
      * 设备图片
      */
-    @NotBlank(message = "设备图片不能为空", groups = { AddGroup.class, EditGroup.class })
     private String pic;
-
-    /**
-     * json自定义属性
-     */
-    @NotBlank(message = "json自定义属性不能为空", groups = { AddGroup.class, EditGroup.class })
-    private String attributes;
-
-    /**
-     * 1:已删除，0:正常
-     */
-    @NotNull(message = "1:已删除，0:正常不能为空", groups = { AddGroup.class, EditGroup.class })
-    private Integer deleted;
 
 
 }
