@@ -22,9 +22,9 @@ public class DeviceVo {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 
+     *
      */
-    @ExcelProperty(value = "")
+    @ExcelProperty(value = "id")
     private Long id;
 
     /**
