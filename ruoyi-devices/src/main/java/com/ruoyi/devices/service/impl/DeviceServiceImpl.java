@@ -7,6 +7,10 @@ import com.ruoyi.common.core.domain.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.devices.domain.bo.MqttAclBo;
+import com.ruoyi.devices.domain.bo.MqttUserBo;
+import com.ruoyi.devices.service.IMqttAclService;
+import com.ruoyi.devices.service.IMqttUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.devices.domain.bo.DeviceBo;
@@ -14,6 +18,7 @@ import com.ruoyi.devices.domain.vo.DeviceVo;
 import com.ruoyi.devices.domain.Device;
 import com.ruoyi.devices.mapper.DeviceMapper;
 import com.ruoyi.devices.service.IDeviceService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -27,9 +32,11 @@ import java.util.Collection;
  */
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class DeviceServiceImpl implements IDeviceService {
 
     private final DeviceMapper baseMapper;
+    private final IMqttUserService iMqttUserService;
 
     /**
      * 查询设备管理
@@ -72,13 +79,20 @@ public class DeviceServiceImpl implements IDeviceService {
      */
     @Override
     public Boolean insertByBo(DeviceBo bo) {
+        //转化成device
         Device add = BeanUtil.toBean(bo, Device.class);
         validEntityBeforeSave(add);
+//        插入devices
         boolean flag = baseMapper.insert(add) > 0;
+        //擦入MqttUser
+        MqttUserBo mqttUserBo = new MqttUserBo();
+        mqttUserBo.setUsername(add.getSerialNum());
+        Boolean flag1 = iMqttUserService.insertByBo(mqttUserBo);
+
         if (flag) {
             bo.setId(add.getId());
         }
-        return flag;
+        return flag && flag1;
     }
 
     /**
@@ -96,6 +110,20 @@ public class DeviceServiceImpl implements IDeviceService {
      */
     private void validEntityBeforeSave(Device entity){
         //TODO 做一些数据校验,如唯一约束
+        if (entity.getDeviceTypeId() == null) {
+            throw new IllegalArgumentException("设备类型是必须的！！！");
+        } else if (entity.getSerialNum() == null) {
+            throw new IllegalArgumentException("设备的SerialNum是必须的");
+        }
+        String serialNum = entity.getSerialNum();
+        LambdaQueryWrapper<Device> lambdaQueryWrapper =new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Device::getSerialNum, serialNum);
+        Long count = baseMapper.selectCount(lambdaQueryWrapper);
+        if (count > 0 ) {
+            throw new IllegalArgumentException("设备类型不唯一，请重新检查！！！");
+        }
+//        Wrappers.lambdaQuery()
+
     }
 
     /**

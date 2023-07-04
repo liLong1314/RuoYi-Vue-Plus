@@ -72,7 +72,12 @@ public class MqttAclServiceImpl implements IMqttAclService {
     public Boolean insertByBo(MqttAclBo bo) {
         MqttAcl add = BeanUtil.toBean(bo, MqttAcl.class);
         validEntityBeforeSave(add);
+        if (add.getAllow() == null) {
+            add.setAllow(0L);
+        }
         boolean flag = baseMapper.insert(add) > 0;
+
+
         if (flag) {
             bo.setId(add.getId());
 
@@ -95,6 +100,13 @@ public class MqttAclServiceImpl implements IMqttAclService {
      */
     private void validEntityBeforeSave(MqttAcl entity){
         //TODO 做一些数据校验,如唯一约束
+        if (entity.getAllow() == 1) {
+            throw new IllegalArgumentException("不允许访问mqttACL，所以操作不予许");
+        }
+//        else if (entity.getTopic() == null || entity.getTopic() == "") {
+//            throw new IllegalArgumentException("不存在主题，");
+//        }
+
     }
 
     /**

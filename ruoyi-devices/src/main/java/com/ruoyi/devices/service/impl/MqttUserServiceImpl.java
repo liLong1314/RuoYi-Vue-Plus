@@ -1,12 +1,15 @@
 package com.ruoyi.devices.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.crypto.digest.DigestUtil;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.domain.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.devices.domain.bo.MqttAclBo;
+import com.ruoyi.devices.service.IMqttAclService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.devices.domain.bo.MqttUserBo;
@@ -15,6 +18,8 @@ import com.ruoyi.devices.domain.MqttUser;
 import com.ruoyi.devices.mapper.MqttUserMapper;
 import com.ruoyi.devices.service.IMqttUserService;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
@@ -30,6 +35,7 @@ import java.util.Collection;
 public class MqttUserServiceImpl implements IMqttUserService {
 
     private final MqttUserMapper baseMapper;
+    private final IMqttAclService mqttAclService;
 
     /**
      * 查询mqtt客户的连接鉴权，密码为sha256加密
@@ -67,17 +73,31 @@ public class MqttUserServiceImpl implements IMqttUserService {
 
     /**
      * 新增mqtt客户的连接鉴权，密码为sha256加密
+     * 密码不存在的话暂时把密码初始化为12138
      */
     @Override
     public Boolean insertByBo(MqttUserBo bo) {
         MqttUser add = BeanUtil.toBean(bo, MqttUser.class);
+        //密码不为空
         validEntityBeforeSave(add);
+        if (bo.getPassword() == null) {
+            add.setPassword("12138");
+        }
+        //hutool加密真好用
+        String password = DigestUtil.sha256Hex(bo.getPassword());
+//        byte[] bytes = DigestUtil.sha256(bo.getPassword());
+        add.setPassword(password);
         boolean flag = baseMapper.insert(add) > 0;
+        //mqttAcl新增
+        MqttAclBo mqttAclBo = new MqttAclBo();
+        mqttAclBo.setUsername(bo.getUsername());
+        Boolean flag1 = mqttAclService.insertByBo(mqttAclBo);
+//TODO 不理解这个到底有什么用啊？为什要加一个这样的判读啊！
         if (flag) {
             bo.setId(add.getId());
 
         }
-        return flag;
+        return flag && flag1;
     }
 
     /**
@@ -95,6 +115,10 @@ public class MqttUserServiceImpl implements IMqttUserService {
      */
     private void validEntityBeforeSave(MqttUser entity){
         //TODO 做一些数据校验,如唯一约束
+        if (entity.getUsername() == null) {
+            throw new  IllegalArgumentException("MqttUser的username为空。");
+        }
+
     }
 
     /**

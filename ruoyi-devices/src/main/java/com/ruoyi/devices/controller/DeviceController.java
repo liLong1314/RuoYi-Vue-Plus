@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.*;
@@ -35,8 +36,12 @@ import com.ruoyi.common.core.page.TableDataInfo;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/devices/device")
+//@SaIgnore
 public class DeviceController extends BaseController {
-
+    /**
+     * @RequiredArgsConstructor注解，实现了构造注入。
+     * 声明为类的final字段，可以确保在对象创建后不能更改依赖项。这可以提高代码的稳定性和可靠性。
+     */
     private final IDeviceService iDeviceService;
 
     /**
@@ -79,6 +84,7 @@ public class DeviceController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public R<Void> add(@Validated(AddGroup.class) @RequestBody DeviceBo bo) {
+
         return toAjax(iDeviceService.insertByBo(bo));
     }
 

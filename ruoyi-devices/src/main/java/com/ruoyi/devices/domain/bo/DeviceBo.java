@@ -12,7 +12,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
  * 设备管理业务对象 t_device
- *
+ *callSuper = true：用于指定是否调用父类的 `equals()` 和 `hashCode()` 方法。
  * @author 李健
  * @date 2023-07-04
  */
@@ -22,7 +22,7 @@ import com.ruoyi.common.core.domain.BaseEntity;
 public class DeviceBo extends BaseEntity {
 
     /**
-     * 
+     *
      */
     @NotNull(message = "不能为空", groups = { EditGroup.class })
     private Long id;
