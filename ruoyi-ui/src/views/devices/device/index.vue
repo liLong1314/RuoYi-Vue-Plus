@@ -9,6 +9,14 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
+      <el-form-item label="外键, 设备类型id" prop="deviceTypeId">
+        <el-input
+          v-model="queryParams.deviceTypeId"
+          placeholder="请输入外键, 设备类型id"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
         <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
@@ -101,6 +109,9 @@
         <el-form-item label="设备编号" prop="serialNum">
           <el-input v-model="form.serialNum" placeholder="请输入设备编号" />
         </el-form-item>
+        <el-form-item label="外键, 设备类型id" prop="deviceTypeId">
+          <el-input v-model="form.deviceTypeId" placeholder="请输入外键, 设备类型id" />
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input v-model="form.remark" placeholder="请输入备注" />
         </el-form-item>
@@ -155,7 +166,7 @@ export default {
           { required: true, message: "设备编号不能为空", trigger: "blur" }
         ],
         deviceTypeId: [
-          { required: true, message: "外键, 设备类型id不能为空", trigger: "change" }
+          { required: true, message: "外键, 设备类型id不能为空", trigger: "blur" }
         ],
       }
     };

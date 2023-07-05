@@ -1,6 +1,14 @@
 <template>
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" size="small" :inline="true" v-show="showSearch" label-width="68px">
+      <el-form-item label="用户名" prop="username">
+        <el-input
+          v-model="queryParams.username"
+          placeholder="请输入用户名"
+          clearable
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="主题" prop="topic">
         <el-input
           v-model="queryParams.topic"
@@ -100,6 +108,21 @@
     <!-- 添加或修改mqttUser的acl规则对话框 -->
     <el-dialog :title="title" :visible.sync="open" width="500px" append-to-body>
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item label="用户名" prop="username">
+          <el-input v-model="form.username" placeholder="请输入用户名" />
+        </el-form-item>
+        <el-form-item label="主题" prop="topic">
+          <el-input v-model="form.topic" placeholder="请输入主题" />
+        </el-form-item>
+        <el-form-item label="访问类型： 1->订阅；2->发布；3->订阅与发布" prop="access">
+          <el-input v-model="form.access" placeholder="请输入访问类型： 1->订阅；2->发布；3->订阅与发布" />
+        </el-form-item>
+        <el-form-item label="是否允许访问：0-deny，1-allow" prop="allow">
+          <el-input v-model="form.allow" placeholder="请输入是否允许访问：0-deny，1-allow" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="form.remark" placeholder="请输入备注" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button :loading="buttonLoading" type="primary" @click="submitForm">确 定</el-button>
@@ -140,6 +163,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
+        username: undefined,
         topic: undefined,
       },
       // 表单参数
@@ -153,10 +177,10 @@ export default {
           { required: true, message: "主题不能为空", trigger: "blur" }
         ],
         access: [
-          { required: true, message: "访问类型： 1->订阅；2->发布；3->订阅与发布不能为空", trigger: "change" }
+          { required: true, message: "访问类型： 1->订阅；2->发布；3->订阅与发布不能为空", trigger: "blur" }
         ],
         allow: [
-          { required: true, message: "是否允许访问：0-deny，1-allow不能为空", trigger: "change" }
+          { required: true, message: "是否允许访问：0-deny，1-allow不能为空", trigger: "blur" }
         ],
       }
     };
