@@ -40,8 +40,9 @@ public class Device extends BaseEntity {
      */
     private String remark;
     /**
-     * 1:已删除，0:正常
+     * 2:已删除，0:正常
      */
+    @TableLogic
     private Integer deleted;
 
 }

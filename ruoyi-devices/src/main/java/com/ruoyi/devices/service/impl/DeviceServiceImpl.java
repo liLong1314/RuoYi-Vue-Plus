@@ -24,10 +24,7 @@ import com.ruoyi.devices.service.IDeviceService;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Collection;
+import java.util.*;
 
 /**
  * 设备管理Service业务层处理
@@ -91,7 +88,7 @@ public class DeviceServiceImpl implements IDeviceService {
         //转化成device
         Device add = BeanUtil.toBean(bo, Device.class);
         validEntityBeforeSave(add);
-//        插入devices
+//        插入device
         boolean flag = baseMapper.insert(add) > 0;
         //擦入MqttUser
         MqttUserBo mqttUserBo = new MqttUserBo();
@@ -141,20 +138,29 @@ public class DeviceServiceImpl implements IDeviceService {
     @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
-            //TODO 做一些业务上的校验,判断是否需要校验
+
             List<DeviceVo> deviceVos = baseMapper.selectVoBatchIds(ids);
 //            for ()
+
             for (DeviceVo deviceVo : deviceVos ){
+                //                舍弃这种方式太麻烦了，效率不行
                 LambdaQueryWrapper<MqttUser> lambdaQueryWrapper =new LambdaQueryWrapper<MqttUser>();
                 lambdaQueryWrapper.eq(MqttUser::getUsername, deviceVo.getSerialNum());
-
+//                mqttUserMapper.deleteByMap()
                 List<MqttUser> mqttUsers = mqttUserMapper.selectList(lambdaQueryWrapper);
+
                 List<Long> iids = new ArrayList<Long>();
                 for (MqttUser mqttUser:mqttUsers){
                     iids.add(mqttUser.getId());
 //                    mqttUserMapper.deleteById(mqttUser.getId());
                 }
                 iMqttUserService.deleteWithValidByIds(iids, isValid);
+
+////                更喜欢这种方式，更简单
+//                Map<String, Object> map = new HashMap<>();
+//                map.put("username", deviceVo.getSerialNum());
+//                System.out.println(mqttUserMapper.deleteByMap(map) > 0);
+
             }
 //            for ()
 //            iMqttUserService.

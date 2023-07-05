@@ -23,6 +23,7 @@ import com.ruoyi.devices.service.IMqttUserService;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
@@ -91,7 +92,11 @@ public class MqttUserServiceImpl implements IMqttUserService {
         String password = DigestUtil.sha256Hex(bo.getPassword());
 //        byte[] bytes = DigestUtil.sha256(bo.getPassword());
         add.setPassword(password);
+
+//        add.set
+
         boolean flag = baseMapper.insert(add) > 0;
+
         //mqttAcl新增
         MqttAclBo mqttAclBo = new MqttAclBo();
         mqttAclBo.setUsername(bo.getUsername());
@@ -123,6 +128,7 @@ public class MqttUserServiceImpl implements IMqttUserService {
             throw new  IllegalArgumentException("MqttUser的username为空。");
         }
 
+
     }
 
     /**
@@ -132,16 +138,20 @@ public class MqttUserServiceImpl implements IMqttUserService {
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
-            List<MqttAclVo> mqttAclVos = mqttAclMapper.selectVoBatchIds(ids);
-//            for ()
-            for (MqttAclVo mqttAclVo : mqttAclVos ){
-                LambdaQueryWrapper<MqttAcl> lambdaQueryWrapper =new LambdaQueryWrapper<MqttAcl>();
-                lambdaQueryWrapper.eq(MqttAcl::getUsername, mqttAclVo.getUsername());
-                List<MqttAcl> mqttAcls = mqttAclMapper.selectList(lambdaQueryWrapper);
-                for (MqttAcl mqttAcl:mqttAcls){
-                    mqttAclMapper.deleteById(mqttAcl.getId());
-                }
+            List<MqttUserVo> mqttUserVos = baseMapper.selectVoBatchIds(ids);
 
+//            baseMapper.selectBatchIds()
+//            for ()
+            for (MqttUserVo mqttUserVo : mqttUserVos ){
+                LambdaQueryWrapper<MqttAcl> lambdaQueryWrapper =new LambdaQueryWrapper<MqttAcl>();
+                lambdaQueryWrapper.eq(MqttAcl::getUsername, mqttUserVo.getUsername());
+                List<MqttAcl> mqttAcls = mqttAclMapper.selectList(lambdaQueryWrapper);
+                List<Long> iids = new ArrayList<>();
+                for (MqttAcl mqttAcl:mqttAcls){
+                    iids.add(mqttAcl.getId());
+//                    mqttAclMapper.deleteById(mqttAcl.getId());
+                }
+                mqttAclService.deleteWithValidByIds(iids, isValid);
             }
         }
         return baseMapper.deleteBatchIds(ids) > 0;

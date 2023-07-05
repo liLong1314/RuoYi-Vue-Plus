@@ -10,7 +10,7 @@
     </parent>
 
 
-    <artifactId>ruoyi-device</artifactId>
+    <artifactId>ruoyi-develop</artifactId>
 
     <dependencies>
         <dependency>

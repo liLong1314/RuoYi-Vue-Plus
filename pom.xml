@@ -355,7 +355,7 @@
         <module>ruoyi-extend</module>
         <module>ruoyi-oss</module>
         <module>ruoyi-sms</module>
-        <module>ruoyi-device</module>
+        <module>ruoyi-develop</module>
         <module>ruoyi-test</module>
         <module>ruoyi-devices</module>
     </modules>
