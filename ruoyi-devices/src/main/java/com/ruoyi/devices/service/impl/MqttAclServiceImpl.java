@@ -29,14 +29,14 @@ import java.util.Collection;
 @Service
 public class MqttAclServiceImpl implements IMqttAclService {
 
-    private final MqttAclMapper baseMapper;
+    private final MqttAclMapper mqttAclMapper;
 
     /**
      * 查询mqttUser的acl规则
      */
     @Override
     public MqttAclVo queryById(Long id){
-        return baseMapper.selectVoById(id);
+        return mqttAclMapper.selectVoById(id);
     }
 
     /**
@@ -45,7 +45,7 @@ public class MqttAclServiceImpl implements IMqttAclService {
     @Override
     public TableDataInfo<MqttAclVo> queryPageList(MqttAclBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<MqttAcl> lqw = buildQueryWrapper(bo);
-        Page<MqttAclVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<MqttAclVo> result = mqttAclMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
     }
 
@@ -55,7 +55,7 @@ public class MqttAclServiceImpl implements IMqttAclService {
     @Override
     public List<MqttAclVo> queryList(MqttAclBo bo) {
         LambdaQueryWrapper<MqttAcl> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+        return mqttAclMapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<MqttAcl> buildQueryWrapper(MqttAclBo bo) {
@@ -75,7 +75,8 @@ public class MqttAclServiceImpl implements IMqttAclService {
         if (add.getAllow() == null) {
             add.setAllow(0L);
         }
-        boolean flag = baseMapper.insert(add) > 0;
+//        boolean flag = mqttAclMapper.insert(add) > 0;
+        boolean flag = mqttAclMapper.insert(add) > 0;
 
 
         if (flag) {
@@ -92,7 +93,7 @@ public class MqttAclServiceImpl implements IMqttAclService {
     public Boolean updateByBo(MqttAclBo bo) {
         MqttAcl update = BeanUtil.toBean(bo, MqttAcl.class);
         validEntityBeforeSave(update);
-        return baseMapper.updateById(update) > 0;
+        return mqttAclMapper.updateById(update) > 0;
     }
 
     /**
@@ -100,9 +101,9 @@ public class MqttAclServiceImpl implements IMqttAclService {
      */
     private void validEntityBeforeSave(MqttAcl entity){
         //TODO 做一些数据校验,如唯一约束
-        if (entity.getAllow() == 1) {
-            throw new IllegalArgumentException("不允许访问mqttACL，所以操作不予许");
-        }
+//        if (entity.getAllow() == 1) {
+//            throw new IllegalArgumentException("不允许访问mqttACL，所以操作不予许");
+//        }
 //        else if (entity.getTopic() == null || entity.getTopic() == "") {
 //            throw new IllegalArgumentException("不存在主题，");
 //        }
@@ -117,6 +118,6 @@ public class MqttAclServiceImpl implements IMqttAclService {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
         }
-        return baseMapper.deleteBatchIds(ids) > 0;
+        return mqttAclMapper.deleteBatchIds(ids) > 0;
     }
 }

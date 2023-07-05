@@ -12,6 +12,7 @@ import com.ruoyi.devices.domain.bo.MqttUserBo;
 import com.ruoyi.devices.service.IMqttAclService;
 import com.ruoyi.devices.service.IMqttUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.devices.domain.bo.DeviceBo;
 import com.ruoyi.devices.domain.vo.DeviceVo;
@@ -20,6 +21,7 @@ import com.ruoyi.devices.mapper.DeviceMapper;
 import com.ruoyi.devices.service.IDeviceService;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
@@ -35,8 +37,11 @@ import java.util.Collection;
 @Transactional
 public class DeviceServiceImpl implements IDeviceService {
 
-    private final DeviceMapper baseMapper;
-    private final IMqttUserService iMqttUserService;
+
+//    @Resource
+      private final DeviceMapper baseMapper;
+//    @Resource
+      private final IMqttUserService iMqttUserService;
 
     /**
      * 查询设备管理
