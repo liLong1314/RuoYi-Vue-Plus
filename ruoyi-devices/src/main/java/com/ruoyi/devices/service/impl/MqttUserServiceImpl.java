@@ -8,7 +8,10 @@ import com.ruoyi.common.core.domain.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.devices.domain.MqttAcl;
 import com.ruoyi.devices.domain.bo.MqttAclBo;
+import com.ruoyi.devices.domain.vo.MqttAclVo;
+import com.ruoyi.devices.mapper.MqttAclMapper;
 import com.ruoyi.devices.service.IMqttAclService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -36,6 +39,7 @@ public class MqttUserServiceImpl implements IMqttUserService {
 
     private final MqttUserMapper baseMapper;
     private final IMqttAclService mqttAclService;
+    private final MqttAclMapper mqttAclMapper;
 
     /**
      * 查询mqtt客户的连接鉴权，密码为sha256加密
@@ -128,6 +132,17 @@ public class MqttUserServiceImpl implements IMqttUserService {
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
+            List<MqttAclVo> mqttAclVos = mqttAclMapper.selectVoBatchIds(ids);
+//            for ()
+            for (MqttAclVo mqttAclVo : mqttAclVos ){
+                LambdaQueryWrapper<MqttAcl> lambdaQueryWrapper =new LambdaQueryWrapper<MqttAcl>();
+                lambdaQueryWrapper.eq(MqttAcl::getUsername, mqttAclVo.getUsername());
+                List<MqttAcl> mqttAcls = mqttAclMapper.selectList(lambdaQueryWrapper);
+                for (MqttAcl mqttAcl:mqttAcls){
+                    mqttAclMapper.deleteById(mqttAcl.getId());
+                }
+
+            }
         }
         return baseMapper.deleteBatchIds(ids) > 0;
     }

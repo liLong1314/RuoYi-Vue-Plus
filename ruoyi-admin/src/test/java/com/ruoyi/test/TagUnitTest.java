@@ -1,7 +1,10 @@
 package com.ruoyi.test;
 
+import com.ruoyi.devices.mapper.DeviceMapper;
 import org.junit.jupiter.api.*;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import javax.annotation.Resource;
 
 /**
  * 标签单元测试案例
@@ -50,5 +53,14 @@ public class TagUnitTest {
         System.out.println("@AfterEach ==================");
     }
 
+    @Resource
+    DeviceMapper deviceMapper;
+    @Test
+    @DisplayName("Should throw an exception when the device serial number is null")
+    public void test1(){
+        Long aLong = deviceMapper.selectCount(null);
+        System.out.println(aLong);
+
+    }
 
 }

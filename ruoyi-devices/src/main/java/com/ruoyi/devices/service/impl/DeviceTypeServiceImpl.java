@@ -7,6 +7,8 @@ import com.ruoyi.common.core.domain.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.system.service.ISysOssService;
+import com.ruoyi.system.service.impl.SysOssServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.ruoyi.devices.domain.bo.DeviceTypeBo;
@@ -18,6 +20,7 @@ import com.ruoyi.devices.service.IDeviceTypeService;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * 设备类型Service业务层处理
@@ -30,6 +33,7 @@ import java.util.Collection;
 public class DeviceTypeServiceImpl implements IDeviceTypeService {
 
     private final DeviceTypeMapper baseMapper;
+    private  final SysOssServiceImpl service;
 
     /**
      * 查询设备类型
@@ -46,6 +50,9 @@ public class DeviceTypeServiceImpl implements IDeviceTypeService {
     public TableDataInfo<DeviceTypeVo> queryPageList(DeviceTypeBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<DeviceType> lqw = buildQueryWrapper(bo);
         Page<DeviceTypeVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        for (DeviceTypeVo deviceTypeVo : result.getRecords()) {
+            deviceTypeVo.setPic(service.selectUrlByIds(deviceTypeVo.getPic()));
+        }
         return TableDataInfo.build(result);
     }
 
@@ -55,7 +62,16 @@ public class DeviceTypeServiceImpl implements IDeviceTypeService {
     @Override
     public List<DeviceTypeVo> queryList(DeviceTypeBo bo) {
         LambdaQueryWrapper<DeviceType> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+        List<DeviceTypeVo> deviceTypeVos = baseMapper.selectVoList(lqw).stream().map(item ->{
+                DeviceTypeVo deviceTypeVo = new DeviceTypeVo();
+                BeanUtil.copyProperties(item,deviceTypeVo);
+                String pic = service.selectUrlByIds(item.getPic());
+                deviceTypeVo.setPic(pic);
+                return deviceTypeVo;
+            }
+        ).collect(Collectors.toList());
+
+        return deviceTypeVos;
     }
 
     private LambdaQueryWrapper<DeviceType> buildQueryWrapper(DeviceTypeBo bo) {

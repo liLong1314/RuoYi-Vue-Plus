@@ -7,8 +7,10 @@ import com.ruoyi.common.core.domain.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.devices.domain.MqttUser;
 import com.ruoyi.devices.domain.bo.MqttAclBo;
 import com.ruoyi.devices.domain.bo.MqttUserBo;
+import com.ruoyi.devices.mapper.MqttUserMapper;
 import com.ruoyi.devices.service.IMqttAclService;
 import com.ruoyi.devices.service.IMqttUserService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import com.ruoyi.devices.service.IDeviceService;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Collection;
@@ -42,6 +45,7 @@ public class DeviceServiceImpl implements IDeviceService {
       private final DeviceMapper baseMapper;
 //    @Resource
       private final IMqttUserService iMqttUserService;
+      private final MqttUserMapper mqttUserMapper;
 
     /**
      * 查询设备管理
@@ -138,7 +142,25 @@ public class DeviceServiceImpl implements IDeviceService {
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
+            List<DeviceVo> deviceVos = baseMapper.selectVoBatchIds(ids);
+//            for ()
+            for (DeviceVo deviceVo : deviceVos ){
+                LambdaQueryWrapper<MqttUser> lambdaQueryWrapper =new LambdaQueryWrapper<MqttUser>();
+                lambdaQueryWrapper.eq(MqttUser::getUsername, deviceVo.getSerialNum());
+
+                List<MqttUser> mqttUsers = mqttUserMapper.selectList(lambdaQueryWrapper);
+                List<Long> iids = new ArrayList<Long>();
+                for (MqttUser mqttUser:mqttUsers){
+                    iids.add(mqttUser.getId());
+//                    mqttUserMapper.deleteById(mqttUser.getId());
+                }
+                iMqttUserService.deleteWithValidByIds(iids, isValid);
+            }
+//            for ()
+//            iMqttUserService.
         }
-        return baseMapper.deleteBatchIds(ids) > 0;
+        boolean flag = baseMapper.deleteBatchIds(ids) > 0;
+
+        return flag ;
     }
 }

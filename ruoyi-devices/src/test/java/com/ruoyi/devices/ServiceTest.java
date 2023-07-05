@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -18,9 +19,9 @@ import javax.annotation.Resource;
  * @Author lijia
  * @createTime 2023/7/5 0:53
  */
-@SpringBootApplication
+@SpringBootTest
 @RunWith(SpringRunner.class)
-@DisplayName("DeviceServiceImpl test")
+//@DisplayName("DeviceServiceImpl test")
 public class ServiceTest {
 
 //
