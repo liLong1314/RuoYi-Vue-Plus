@@ -71,22 +71,29 @@ public class MqttAclServiceImpl implements IMqttAclService {
     @Override
     public Boolean insertByBo(MqttAclBo bo) {
         MqttAcl add = BeanUtil.toBean(bo, MqttAcl.class);
-
+//      默认允许访问
         if (add.getAllow() == null) {
             add.setAllow(1L);
         }
-
+//第一条
+        add.setAccess(1L);
         add.setTopic("/zustse/dev/{"+bo.getUsername()+"}/cmd");
-//        boolean flag = mqttAclMapper.insert(add) > 0;
         validEntityBeforeSave(add);
         boolean flag = mqttAclMapper.insert(add) > 0;
-
-
+//        第二条
+        MqttAcl add2 = BeanUtil.toBean(bo, MqttAcl.class);
+        if (add2.getAllow() == null) {
+            add2.setAllow(1L);
+        }
+        add2.setAccess(2L);
+        add2.setTopic("/zustse/dev/{"+bo.getUsername()+"}/data");
+        validEntityBeforeSave(add2);
+        boolean flag2 = mqttAclMapper.insert(add2) > 0;
         if (flag) {
             bo.setId(add.getId());
 
         }
-        return flag;
+        return flag&&flag2;
     }
 
     /**
@@ -95,6 +102,13 @@ public class MqttAclServiceImpl implements IMqttAclService {
     @Override
     public Boolean updateByBo(MqttAclBo bo) {
         MqttAcl update = BeanUtil.toBean(bo, MqttAcl.class);
+        if (update.getAccess() == 1){
+            update.setTopic("/zustse/dev/{"+update.getUsername()+"}/cmd");
+        } else if (update.getAccess() == 2) {
+            update.setTopic("/zustse/dev/{"+update.getUsername()+"}/data");
+        }else {
+            update.setTopic("/zustse/dev/{"+update.getUsername()+"}/info");
+        }
         validEntityBeforeSave(update);
         return mqttAclMapper.updateById(update) > 0;
     }
@@ -104,7 +118,13 @@ public class MqttAclServiceImpl implements IMqttAclService {
      */
     private void validEntityBeforeSave(MqttAcl entity){
         //TODO 做一些数据校验,如唯一约束
-//        if (entity.getAllow() == 1) {
+//        if (entity.getUsername() != null) {
+//            LambdaQueryWrapper<MqttAcl> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+//            lambdaQueryWrapper.eq(MqttAcl::getUsername, entity.getUsername());
+//            boolean b = mqttAclMapper.selectCount(lambdaQueryWrapper) > 0;
+//            if (b){
+//                throw new IllegalArgumentException("重复username");
+//            }
 //            throw new IllegalArgumentException("不允许访问mqttACL，所以操作不予许");
 //        }
 //        else

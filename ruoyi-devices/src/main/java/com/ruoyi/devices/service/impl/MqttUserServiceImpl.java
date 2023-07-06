@@ -38,7 +38,7 @@ import java.util.Collection;
 @Service
 public class MqttUserServiceImpl implements IMqttUserService {
 
-    private final MqttUserMapper baseMapper;
+    private final MqttUserMapper mqttUserMapper;
     private final IMqttAclService mqttAclService;
     private final MqttAclMapper mqttAclMapper;
 
@@ -47,7 +47,7 @@ public class MqttUserServiceImpl implements IMqttUserService {
      */
     @Override
     public MqttUserVo queryById(Long id){
-        return baseMapper.selectVoById(id);
+        return mqttUserMapper.selectVoById(id);
     }
 
     /**
@@ -56,7 +56,7 @@ public class MqttUserServiceImpl implements IMqttUserService {
     @Override
     public TableDataInfo<MqttUserVo> queryPageList(MqttUserBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<MqttUser> lqw = buildQueryWrapper(bo);
-        Page<MqttUserVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<MqttUserVo> result = mqttUserMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
     }
 
@@ -66,7 +66,7 @@ public class MqttUserServiceImpl implements IMqttUserService {
     @Override
     public List<MqttUserVo> queryList(MqttUserBo bo) {
         LambdaQueryWrapper<MqttUser> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+        return mqttUserMapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<MqttUser> buildQueryWrapper(MqttUserBo bo) {
@@ -95,7 +95,7 @@ public class MqttUserServiceImpl implements IMqttUserService {
 
 //        add.set
 
-        boolean flag = baseMapper.insert(add) > 0;
+        boolean flag = mqttUserMapper.insert(add) > 0;
 
         //mqttAcl新增
         MqttAclBo mqttAclBo = new MqttAclBo();
@@ -116,7 +116,7 @@ public class MqttUserServiceImpl implements IMqttUserService {
     public Boolean updateByBo(MqttUserBo bo) {
         MqttUser update = BeanUtil.toBean(bo, MqttUser.class);
         validEntityBeforeSave(update);
-        return baseMapper.updateById(update) > 0;
+        return mqttUserMapper.updateById(update) > 0;
     }
 
     /**
@@ -138,9 +138,9 @@ public class MqttUserServiceImpl implements IMqttUserService {
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
-            List<MqttUserVo> mqttUserVos = baseMapper.selectVoBatchIds(ids);
+            List<MqttUserVo> mqttUserVos = mqttUserMapper.selectVoBatchIds(ids);
 
-//            baseMapper.selectBatchIds()
+//            mqttUserMapper.selectBatchIds()
 //            for ()
             for (MqttUserVo mqttUserVo : mqttUserVos ){
                 LambdaQueryWrapper<MqttAcl> lambdaQueryWrapper =new LambdaQueryWrapper<MqttAcl>();
@@ -154,6 +154,6 @@ public class MqttUserServiceImpl implements IMqttUserService {
                 mqttAclService.deleteWithValidByIds(iids, isValid);
             }
         }
-        return baseMapper.deleteBatchIds(ids) > 0;
+        return mqttUserMapper.deleteBatchIds(ids) > 0;
     }
 }

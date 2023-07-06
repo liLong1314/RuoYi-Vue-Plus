@@ -39,7 +39,7 @@ public class DeviceServiceImpl implements IDeviceService {
 
 
 //    @Resource
-      private final DeviceMapper baseMapper;
+      private final DeviceMapper deviceMapper;
 //    @Resource
       private final IMqttUserService iMqttUserService;
       private final MqttUserMapper mqttUserMapper;
@@ -49,7 +49,7 @@ public class DeviceServiceImpl implements IDeviceService {
      */
     @Override
     public DeviceVo queryById(Long id){
-        return baseMapper.selectVoById(id);
+        return deviceMapper.selectVoById(id);
     }
 
     /**
@@ -58,7 +58,7 @@ public class DeviceServiceImpl implements IDeviceService {
     @Override
     public TableDataInfo<DeviceVo> queryPageList(DeviceBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<Device> lqw = buildQueryWrapper(bo);
-        Page<DeviceVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<DeviceVo> result = deviceMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
     }
 
@@ -68,7 +68,7 @@ public class DeviceServiceImpl implements IDeviceService {
     @Override
     public List<DeviceVo> queryList(DeviceBo bo) {
         LambdaQueryWrapper<Device> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
+        return deviceMapper.selectVoList(lqw);
     }
 
     private LambdaQueryWrapper<Device> buildQueryWrapper(DeviceBo bo) {
@@ -89,7 +89,7 @@ public class DeviceServiceImpl implements IDeviceService {
         Device add = BeanUtil.toBean(bo, Device.class);
         validEntityBeforeSave(add);
 //        插入device
-        boolean flag = baseMapper.insert(add) > 0;
+        boolean flag = deviceMapper.insert(add) > 0;
         //擦入MqttUser
         MqttUserBo mqttUserBo = new MqttUserBo();
         mqttUserBo.setUsername(add.getSerialNum());
@@ -108,7 +108,9 @@ public class DeviceServiceImpl implements IDeviceService {
     public Boolean updateByBo(DeviceBo bo) {
         Device update = BeanUtil.toBean(bo, Device.class);
         validEntityBeforeSave(update);
-        return baseMapper.updateById(update) > 0;
+//        修改MqttUser的Username
+
+        return deviceMapper.updateById(update) > 0;
     }
 
     /**
@@ -124,7 +126,7 @@ public class DeviceServiceImpl implements IDeviceService {
         String serialNum = entity.getSerialNum();
         LambdaQueryWrapper<Device> lambdaQueryWrapper =new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Device::getSerialNum, serialNum);
-        Long count = baseMapper.selectCount(lambdaQueryWrapper);
+        Long count = deviceMapper.selectCount(lambdaQueryWrapper);
         if (count > 0 ) {
             throw new IllegalArgumentException("设备类型不唯一，请重新检查！！！");
         }
@@ -139,7 +141,7 @@ public class DeviceServiceImpl implements IDeviceService {
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
 
-            List<DeviceVo> deviceVos = baseMapper.selectVoBatchIds(ids);
+            List<DeviceVo> deviceVos = deviceMapper.selectVoBatchIds(ids);
 //            for ()
 
             for (DeviceVo deviceVo : deviceVos ){
@@ -154,6 +156,8 @@ public class DeviceServiceImpl implements IDeviceService {
                     iids.add(mqttUser.getId());
 //                    mqttUserMapper.deleteById(mqttUser.getId());
                 }
+
+                System.out.println(iids);
                 iMqttUserService.deleteWithValidByIds(iids, isValid);
 
 ////                更喜欢这种方式，更简单
@@ -165,7 +169,7 @@ public class DeviceServiceImpl implements IDeviceService {
 //            for ()
 //            iMqttUserService.
         }
-        boolean flag = baseMapper.deleteBatchIds(ids) > 0;
+        boolean flag = deviceMapper.deleteBatchIds(ids) > 0;
 
         return flag ;
     }
