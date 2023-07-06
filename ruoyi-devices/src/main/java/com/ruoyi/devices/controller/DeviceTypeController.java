@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
+import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.*;
@@ -35,6 +36,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/devices/deviceType")
+@SaIgnore
 public class DeviceTypeController extends BaseController {
 
     private final IDeviceTypeService iDeviceTypeService;

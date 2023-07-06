@@ -333,7 +333,7 @@
                 <artifactId>ruoyi-test</artifactId>
                 <version>${ruoyi-vue-plus.version}</version>
             </dependency>
-            <!-- demo模块 -->
+            <!-- devices -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
                 <artifactId>ruoyi-devices</artifactId>

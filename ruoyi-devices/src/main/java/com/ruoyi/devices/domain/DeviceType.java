@@ -50,6 +50,7 @@ public class DeviceType extends BaseEntity {
     /**
      * 1:已删除，0:正常
      */
+    @TableLogic
     private Integer deleted;
 
 }
