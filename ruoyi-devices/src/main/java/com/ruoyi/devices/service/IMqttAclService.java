@@ -40,7 +40,7 @@ public interface IMqttAclService {
     /**
      * 修改mqttUser的acl规则
      */
-    Boolean updateByBo(MqttAclBo bo);
+    Boolean updateByBo(MqttAcl bo);
 
     /**
      * 校验并批量删除mqttUser的acl规则信息

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
+import com.ruoyi.devices.domain.MqttAcl;
 import lombok.RequiredArgsConstructor;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.*;
@@ -89,7 +90,7 @@ public class MqttAclController extends BaseController {
     @Log(title = "mqttUser的acl规则", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody MqttAclBo bo) {
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody MqttAcl bo) {
         return toAjax(iMqttAclService.updateByBo(bo));
     }
 

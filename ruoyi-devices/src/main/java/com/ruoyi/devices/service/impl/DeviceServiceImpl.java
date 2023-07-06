@@ -1,6 +1,7 @@
 package com.ruoyi.devices.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.domain.PageQuery;
@@ -109,8 +110,14 @@ public class DeviceServiceImpl implements IDeviceService {
         Device update = BeanUtil.toBean(bo, Device.class);
         validEntityBeforeSave(update);
 //        修改MqttUser的Username
+        LambdaQueryWrapper<MqttUser> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        lambdaQueryWrapper.eq(MqttUser::getUsername, bo.getSerialNum());
+//        調用Db中的查詢查出來mqttUserBo
+        MqttUser mqttUser = Db.getOne(lambdaQueryWrapper);
 
-        return deviceMapper.updateById(update) > 0;
+//        調用iMqttUserService中的更新進行同步更新
+        Boolean flag = iMqttUserService.updateByBo(mqttUser);
+        return deviceMapper.updateById(update) > 0 && flag;
     }
 
     /**

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
+import com.ruoyi.devices.domain.MqttUser;
 import lombok.RequiredArgsConstructor;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.*;
@@ -89,7 +90,7 @@ public class MqttUserController extends BaseController {
     @Log(title = "mqtt客户的连接鉴权，密码为sha256加密", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody MqttUserBo bo) {
+    public R<Void> edit(@Validated(EditGroup.class) @RequestBody MqttUser bo) {
         return toAjax(iMqttUserService.updateByBo(bo));
     }
 

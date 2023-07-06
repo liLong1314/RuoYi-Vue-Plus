@@ -2,6 +2,7 @@ package com.ruoyi.devices.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.domain.PageQuery;
@@ -113,10 +114,15 @@ public class MqttUserServiceImpl implements IMqttUserService {
      * 修改mqtt客户的连接鉴权，密码为sha256加密
      */
     @Override
-    public Boolean updateByBo(MqttUserBo bo) {
+    public Boolean updateByBo(MqttUser bo) {
         MqttUser update = BeanUtil.toBean(bo, MqttUser.class);
         validEntityBeforeSave(update);
-        return mqttUserMapper.updateById(update) > 0;
+//        調用updateByBo
+        LambdaQueryWrapper<MqttAcl> lambdaQueryWrapper = Wrappers.lambdaQuery();
+        lambdaQueryWrapper.eq(MqttAcl::getUsername, bo.getUsername());
+        MqttAcl mqttAcl = Db.getOne(lambdaQueryWrapper);
+        Boolean flag = mqttAclService.updateByBo(mqttAcl);
+        return mqttUserMapper.updateById(update) > 0 && flag;
     }
 
     /**

@@ -100,7 +100,7 @@ public class MqttAclServiceImpl implements IMqttAclService {
      * 修改mqttUser的acl规则
      */
     @Override
-    public Boolean updateByBo(MqttAclBo bo) {
+    public Boolean updateByBo(MqttAcl bo) {
         MqttAcl update = BeanUtil.toBean(bo, MqttAcl.class);
         if (update.getAccess() == 1){
             update.setTopic("/zustse/dev/{"+update.getUsername()+"}/cmd");

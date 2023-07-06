@@ -40,7 +40,7 @@ public interface IMqttUserService {
     /**
      * 修改mqtt客户的连接鉴权，密码为sha256加密
      */
-    Boolean updateByBo(MqttUserBo bo);
+    Boolean updateByBo(MqttUser bo);
 
     /**
      * 校验并批量删除mqtt客户的连接鉴权，密码为sha256加密信息
