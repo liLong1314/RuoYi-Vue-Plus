@@ -2,12 +2,15 @@ package com.ruoyi.devices.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.digest.DigestUtil;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.domain.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.devices.domain.Device;
 import com.ruoyi.devices.domain.MqttAcl;
 import com.ruoyi.devices.domain.bo.MqttAclBo;
 import com.ruoyi.devices.domain.vo.MqttAclVo;
@@ -82,31 +85,35 @@ public class MqttUserServiceImpl implements IMqttUserService {
      */
     @Override
     public Boolean insertByBo(MqttUserBo bo) {
-        MqttUser add = BeanUtil.toBean(bo, MqttUser.class);
-        //密码不为空
-        validEntityBeforeSave(add);
-        if (bo.getPassword() == null) {
+       MqttUser add = BeanUtil.toBean(bo,MqttUser.class);
+       validEntityBeforeSave(add);
+        if (bo.getPassword() == null){
             add.setPassword("12138");
         }
-        //hutool加密真好用
+        //hutool加密
         String password = DigestUtil.sha256Hex(bo.getPassword());
-//        byte[] bytes = DigestUtil.sha256(bo.getPassword());
         add.setPassword(password);
-
-//        add.set
-
-        boolean flag = baseMapper.insert(add) > 0;
-
-        //mqttAcl新增
-        MqttAclBo mqttAclBo = new MqttAclBo();
-        mqttAclBo.setUsername(bo.getUsername());
-        Boolean flag1 = mqttAclService.insertByBo(mqttAclBo);
-//TODO 不理解这个到底有什么用啊？为什要加一个这样的判读啊！
-        if (flag) {
-            bo.setId(add.getId());
-
-        }
-        return flag && flag1;
+       boolean flag1 = baseMapper.insert(add)>0;
+       boolean flag2 = false;
+        //添加用户时给予权限
+        //感觉写这里合适点，因为添加的两个权限不一样，写在ACL里不太行
+       if (flag1){
+           bo.setId(add.getId());
+           MqttAclBo mqttAclBo1 = new MqttAclBo();
+           MqttAclBo mqttAclBo2 = new MqttAclBo();
+           mqttAclBo1.setUsername(bo.getUsername());
+           mqttAclBo2.setUsername(bo.getUsername());
+           mqttAclBo1.setTopic("/zustse/dev/{"+bo.getUsername()+"}/cmd");
+           mqttAclBo2.setTopic("/zustse/dev/{"+bo.getUsername()+"}/data");
+           //允许访问
+           mqttAclBo1.setAllow(1L);mqttAclBo2.setAllow(1L);
+           //权限一允许订阅，权限二允许发布
+           mqttAclBo1.setAccess(1L);
+           mqttAclBo2.setAccess(2L);
+           flag2= (mqttAclService.insertByBo(mqttAclBo1))
+               && (mqttAclService.insertByBo(mqttAclBo2));
+       }
+       return flag1 && flag2;
     }
 
     /**
@@ -116,7 +123,22 @@ public class MqttUserServiceImpl implements IMqttUserService {
     public Boolean updateByBo(MqttUserBo bo) {
         MqttUser update = BeanUtil.toBean(bo, MqttUser.class);
         validEntityBeforeSave(update);
-        return baseMapper.updateById(update) > 0;
+        Long id = bo.getId(); //通过id查询修改前的数据
+        MqttUser beforeUpdate = baseMapper.selectById(id);
+        //若修改用户名，则修改对应的权限username
+        if (update.getUsername() != beforeUpdate.getUsername()){
+            LambdaQueryWrapper<MqttAcl> lqw = new LambdaQueryWrapper<>();
+            lqw.eq(MqttAcl::getUsername,beforeUpdate.getUsername());
+            // 通过username 查询所有与用户相关的ACL
+            List<MqttAcl> mqttAcls = mqttAclMapper.selectList(lqw);
+            //更新mqttAcl的username 利用id对应关系
+            for (MqttAcl mqttAcl : mqttAcls){
+                mqttAcl.setUsername(bo.getUsername());
+                mqttAclMapper.updateById(mqttAcl);
+            }
+        }
+
+        return baseMapper.updateById(update) > 0 ;
     }
 
     /**
@@ -139,7 +161,6 @@ public class MqttUserServiceImpl implements IMqttUserService {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
             List<MqttUserVo> mqttUserVos = baseMapper.selectVoBatchIds(ids);
-
 //            baseMapper.selectBatchIds()
 //            for ()
             for (MqttUserVo mqttUserVo : mqttUserVos ){

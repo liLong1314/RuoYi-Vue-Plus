@@ -7,9 +7,11 @@ import com.ruoyi.common.core.domain.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ruoyi.devices.domain.MqttAcl;
 import com.ruoyi.devices.domain.MqttUser;
 import com.ruoyi.devices.domain.bo.MqttAclBo;
 import com.ruoyi.devices.domain.bo.MqttUserBo;
+import com.ruoyi.devices.mapper.MqttAclMapper;
 import com.ruoyi.devices.mapper.MqttUserMapper;
 import com.ruoyi.devices.service.IMqttAclService;
 import com.ruoyi.devices.service.IMqttUserService;
@@ -41,9 +43,9 @@ public class DeviceServiceImpl implements IDeviceService {
 //    @Resource
       private final DeviceMapper baseMapper;
 //    @Resource
-      private final IMqttUserService iMqttUserService;
       private final MqttUserMapper mqttUserMapper;
-
+      private final MqttAclMapper mqttAclMapper;
+      private  final  IMqttUserService mqttUserService;
     /**
      * 查询设备管理
      */
@@ -85,20 +87,17 @@ public class DeviceServiceImpl implements IDeviceService {
      */
     @Override
     public Boolean insertByBo(DeviceBo bo) {
-        //转化成device
         Device add = BeanUtil.toBean(bo, Device.class);
         validEntityBeforeSave(add);
-//        插入device
-        boolean flag = baseMapper.insert(add) > 0;
-        //擦入MqttUser
-        MqttUserBo mqttUserBo = new MqttUserBo();
-        mqttUserBo.setUsername(add.getSerialNum());
-        Boolean flag1 = iMqttUserService.insertByBo(mqttUserBo);
-
-        if (flag) {
+        boolean flag1 = baseMapper.insert(add) > 0;
+        boolean flag2 = false;
+        if (flag1) {
             bo.setId(add.getId());
+            MqttUserBo mqttUserbo = new MqttUserBo();
+            mqttUserbo.setUsername(bo.getSerialNum());
+            flag2 = mqttUserService.insertByBo(mqttUserbo);
         }
-        return flag && flag1;
+        return flag2 && flag1;
     }
 
     /**
@@ -108,6 +107,26 @@ public class DeviceServiceImpl implements IDeviceService {
     public Boolean updateByBo(DeviceBo bo) {
         Device update = BeanUtil.toBean(bo, Device.class);
         validEntityBeforeSave(update);
+        Long id = update.getId();
+        //如果更新时，更新了设备的SN，则修改对应用户权限的SN吗
+        //bug用户若修改名字则会导致无法更改对于设备的用户权限（查找不到）
+        Device beforeUpdate = baseMapper.selectById(id);
+        if (update.getSerialNum() != beforeUpdate.getSerialNum()){
+            LambdaQueryWrapper<MqttAcl> lqw = new LambdaQueryWrapper<>();
+            lqw.eq(MqttAcl::getUsername,beforeUpdate.getSerialNum());
+            // 通过username 查询所有与设备相关的ACL
+            List<MqttAcl> mqttAcls = mqttAclMapper.selectList(lqw);
+            //更新mqttAcl的主题
+            for (MqttAcl mqttAcl : mqttAcls){
+                if (mqttAcl.getTopic().equals("/zustse/dev/{"+beforeUpdate.getSerialNum()+"}/cmd")){
+                    mqttAcl.setTopic("/zustse/dev/{"+update.getSerialNum()+"}/cmd");
+                }
+                else if (mqttAcl.getTopic().equals("/zustse/dev/{"+beforeUpdate.getSerialNum()+"}/data")){
+                    mqttAcl.setTopic("/zustse/dev/{"+update.getSerialNum()+"}/data");
+                }
+                mqttAclMapper.updateById(mqttAcl);
+            }
+        }
         return baseMapper.updateById(update) > 0;
     }
 
@@ -139,31 +158,6 @@ public class DeviceServiceImpl implements IDeviceService {
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
 
-            List<DeviceVo> deviceVos = baseMapper.selectVoBatchIds(ids);
-//            for ()
-
-            for (DeviceVo deviceVo : deviceVos ){
-                //                舍弃这种方式太麻烦了，效率不行
-                LambdaQueryWrapper<MqttUser> lambdaQueryWrapper =new LambdaQueryWrapper<MqttUser>();
-                lambdaQueryWrapper.eq(MqttUser::getUsername, deviceVo.getSerialNum());
-//                mqttUserMapper.deleteByMap()
-                List<MqttUser> mqttUsers = mqttUserMapper.selectList(lambdaQueryWrapper);
-
-                List<Long> iids = new ArrayList<Long>();
-                for (MqttUser mqttUser:mqttUsers){
-                    iids.add(mqttUser.getId());
-//                    mqttUserMapper.deleteById(mqttUser.getId());
-                }
-                iMqttUserService.deleteWithValidByIds(iids, isValid);
-
-////                更喜欢这种方式，更简单
-//                Map<String, Object> map = new HashMap<>();
-//                map.put("username", deviceVo.getSerialNum());
-//                System.out.println(mqttUserMapper.deleteByMap(map) > 0);
-
-            }
-//            for ()
-//            iMqttUserService.
         }
         boolean flag = baseMapper.deleteBatchIds(ids) > 0;
 

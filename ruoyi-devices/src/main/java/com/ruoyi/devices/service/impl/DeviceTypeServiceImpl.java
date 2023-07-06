@@ -1,6 +1,7 @@
 package com.ruoyi.devices.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.ruoyi.common.core.service.OssService;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.core.domain.PageQuery;
@@ -33,7 +34,7 @@ import java.util.stream.Collectors;
 public class DeviceTypeServiceImpl implements IDeviceTypeService {
 
     private final DeviceTypeMapper baseMapper;
-    private  final SysOssServiceImpl service;
+    private  final OssService service;
 
     /**
      * 查询设备类型
